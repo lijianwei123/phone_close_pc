@@ -33,6 +33,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -49,6 +51,11 @@ public class ClosePcActivity extends Activity {
 	
 	public static final int OK_STATUS_CODE = 200;
 	
+	//左右滑动 @see http://blog.csdn.net/getchance/article/details/8478993
+	private GestureDetector gestureDetector;
+	final int RIGHT = 0;
+	final int LEFT  = 1;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +66,42 @@ public class ClosePcActivity extends Activity {
         this.wakeupPcButton = (Button)this.findViewById(R.id.wakeup_pc_button);
         this.initBind();
         
+        gestureDetector = new GestureDetector(this, onGestureListener);
+        
         Log.i("life", "onCreate");
+    }
+    
+    private  GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener(){
+    	
+    	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,  
+                float velocityY) {
+    		float x = e2.getX() - e1.getX();
+    		float y = e2.getY() - e1.getY(); 
+    		
+    		if(x > 0) {
+    			doResult(RIGHT);
+    		} else if(x < 0) {
+    			doResult(LEFT);
+    		}
+    		return true;
+    	}
+    };
+    public boolean onTouchEvent(MotionEvent e) {
+    	return gestureDetector.onTouchEvent(e);
+    }
+    
+    public void doResult(int action) {
+    	switch(action){
+    	case RIGHT:
+    		Toast.makeText(this, "右边没有东东", Toast.LENGTH_LONG).show();
+    		break;
+    	case LEFT:
+    		//显示pc列表
+    		Intent intent = new Intent();
+    		intent.setClass(this, ListPcActivity.class);
+    		startActivity(intent);
+    		break;
+    	}
     }
     
     //生命周期 http://www.cnblogs.com/feisky/archive/2010/01/01/1637427.html
