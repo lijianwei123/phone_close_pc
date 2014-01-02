@@ -15,6 +15,20 @@
 -->
 
 <resources>
-    <string name="app_name">关机窗口</string>
+    <string name="app_name">关机/唤醒 窗口</string>
     <string name="close_pc">关 机</string>
+    <string name="wakeup_pc">唤醒</string>
+    
+    
+    <string name="form_title">唤醒主机</string>
+    
+    <string name="ip_or_host">ip/host</string>
+    <string name="mac">mac</string>
+    <string name="port">port</string>
+    
+    <string name="tip_ip">请输入ip</string>
+    <string name="tip_port">请输入port</string>
+    <string name="tip_mac">请输入mac</string>
+    
+    <string name="submit">填写</string>
 </resources>

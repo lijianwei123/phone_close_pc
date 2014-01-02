@@ -17,33 +17,24 @@
 package com.dfws.idea;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import android.app.Activity;
-import android.hardware.SensorManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.Toast;
 
 
@@ -52,7 +43,9 @@ public class ClosePcActivity extends Activity {
 	
 	private Button closePcButton;
 	
-	public static final String BASEURL = "http://192.168.18.102/close_pc.php"; 
+	private Button wakeupPcButton;
+	
+	public static final String BASEURL = "http://192.168.18.102:8000"; 
 	
 	public static final int OK_STATUS_CODE = 200;
 	
@@ -63,11 +56,56 @@ public class ClosePcActivity extends Activity {
         this.setContentView(R.layout.main);
         
         this.closePcButton = (Button)this.findViewById(R.id.close_pc_button);
+        this.wakeupPcButton = (Button)this.findViewById(R.id.wakeup_pc_button);
         this.initBind();
+        
+        Log.i("life", "onCreate");
     }
+    
+    //生命周期 http://www.cnblogs.com/feisky/archive/2010/01/01/1637427.html
+    public void onStart()
+    {
+    	super.onStart();
+    	Log.i("life", "onStart");
+    }
+    
+    public void onRestart()
+    {
+    	super.onRestart();
+    	Log.i("life", "onReStart");
+    }
+    
+    public void onResume()
+    {
+    	super.onResume();
+    	Log.i("life", "onResume");
+    }
+    
+    public void onPause()
+    {
+    	super.onPause();
+    	Log.i("life", "onPause");
+    }
+    
+    public void onStop()
+    {
+    	super.onStop();
+    	Log.i("life", "onStop");
+    }
+    
+    public void onDestory()
+    {
+    	super.onDestroy();
+    	Log.i("life", "onDestory");
+    }
+    
+    
+    
+ 
     
     public void initBind()	{
     	this.closePcButton.setOnClickListener(new MyClickLister());
+    	this.wakeupPcButton.setOnClickListener(new MyClickLister());
     }
     
     class MyClickLister implements View.OnClickListener{
@@ -119,6 +157,12 @@ public class ClosePcActivity extends Activity {
 						Log.i("test", strResult);
 						e.printStackTrace();
 					}
+				break;
+				
+				case R.id.wakeup_pc_button:
+					Intent intent = new Intent();
+					intent.setClass(ClosePcActivity.this, WakeupPcActivity.class);
+					startActivity(intent);
 				break;
 			}
 			
