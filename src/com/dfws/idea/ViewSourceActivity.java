@@ -41,23 +41,7 @@ import android.widget.Toast;
 
 
 
-public class ClosePcActivity extends Activity {
-	
-	private Button closePcButton;
-	
-	private Button wakeupPcButton;
-	
-	private Button viewSourceButton;
-	
-	public static final String BASEURL = "http://192.168.18.102:8000"; 
-	
-	public static final int OK_STATUS_CODE = 200;
-	
-	//左右滑动 @see http://blog.csdn.net/getchance/article/details/8478993
-	private GestureDetector gestureDetector;
-	final int RIGHT = 0;
-	final int LEFT  = 1;
-	
+public class ViewSourceActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,7 +153,7 @@ public class ClosePcActivity extends Activity {
 					
 					//String param = URLEncodedUtils.format(params, "UTF-8");
 					
-					HttpGet httpGet = new HttpGet(ClosePcActivity.BASEURL);
+					HttpGet httpGet = new HttpGet(ViewSourceActivity.BASEURL);
 					
 					HttpParams httpParams = new BasicHttpParams();
 					
@@ -192,10 +176,10 @@ public class ClosePcActivity extends Activity {
 						
 						//Log.i("statusCode", String.valueOf(statusCode));
 						
-						if(statusCode == ClosePcActivity.OK_STATUS_CODE) {
-							Toast.makeText(ClosePcActivity.this, "关机成功", Toast.LENGTH_LONG).show();
+						if(statusCode == ViewSourceActivity.OK_STATUS_CODE) {
+							Toast.makeText(ViewSourceActivity.this, "关机成功", Toast.LENGTH_LONG).show();
 						}else{
-							Toast.makeText(ClosePcActivity.this, "关机失败", Toast.LENGTH_LONG).show();
+							Toast.makeText(ViewSourceActivity.this, "关机失败", Toast.LENGTH_LONG).show();
 						}
 					} catch (ClientProtocolException e) {
 						// TODO Auto-generated catch block
@@ -210,14 +194,14 @@ public class ClosePcActivity extends Activity {
 				
 				case R.id.wakeup_pc_button:
 					intent = new Intent();
-					intent.setClass(ClosePcActivity.this, WakeupPcActivity.class);
+					intent.setClass(ViewSourceActivity.this, WakeupPcActivity.class);
 					startActivity(intent);
 				break;
 				
 				case R.id.view_source_button:
 					//显示窗口
 					intent = new Intent();
-					intent.setClass(ClosePcActivity.this, ViewSourceActivity.class);
+					intent.setClass(ViewSourceActivity.this, ViewSourceActivity.class);
 					startActivity(intent);
 				break;
 			}
