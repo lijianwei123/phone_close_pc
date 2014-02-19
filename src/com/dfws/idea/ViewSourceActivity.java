@@ -28,6 +28,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -37,177 +38,101 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-
-
 public class ViewSourceActivity extends Activity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        this.setContentView(R.layout.main);
-        
-        this.closePcButton = (Button)this.findViewById(R.id.close_pc_button);
-        this.wakeupPcButton = (Button)this.findViewById(R.id.wakeup_pc_button);
-        this.viewSourceButton = (Button)this.findViewById(R.id.view_source_button);
-        this.initBind();
-        
-        gestureDetector = new GestureDetector(this, onGestureListener);
-        
-        Log.i("life", "onCreate");
-    }
-    
-    private  GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener(){
-    	
-    	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,  
-                float velocityY) {
-    		float x = e2.getX() - e1.getX();
-    		float y = e2.getY() - e1.getY(); 
-    		
-    		if(x > 0) {
-    			doResult(RIGHT);
-    		} else if(x < 0) {
-    			doResult(LEFT);
-    		}
-    		return true;
-    	}
-    };
-    public boolean onTouchEvent(MotionEvent e) {
-    	return gestureDetector.onTouchEvent(e);
-    }
-    
-    public void doResult(int action) {
-    	switch(action){
-    	case RIGHT:
-    		Toast.makeText(this, "右边没有东东", Toast.LENGTH_LONG).show();
-    		break;
-    	case LEFT:
-    		//显示pc列表
-    		Intent intent = new Intent();
-    		intent.setClass(this, ListPcActivity.class);
-    		startActivity(intent);
-    		break;
-    	}
-    }
-    
-    //生命周期 http://www.cnblogs.com/feisky/archive/2010/01/01/1637427.html
-    public void onStart()
-    {
-    	super.onStart();
-    	Log.i("life", "onStart");
-    }
-    
-    public void onRestart()
-    {
-    	super.onRestart();
-    	Log.i("life", "onReStart");
-    }
-    
-    public void onResume()
-    {
-    	super.onResume();
-    	Log.i("life", "onResume");
-    }
-    
-    public void onPause()
-    {
-    	super.onPause();
-    	Log.i("life", "onPause");
-    }
-    
-    public void onStop()
-    {
-    	super.onStop();
-    	Log.i("life", "onStop");
-    }
-    
-    public void onDestory()
-    {
-    	super.onDestroy();
-    	Log.i("life", "onDestory");
-    }
-    
-    
-    
- 
-    
-    public void initBind()	{
-    	this.closePcButton.setOnClickListener(new MyClickLister());
-    	this.wakeupPcButton.setOnClickListener(new MyClickLister());
-    	this.viewSourceButton.setOnClickListener(new MyClickLister());
-    }
-    
-    class MyClickLister implements View.OnClickListener{
-    	
+
+	private Button sumbitButton;
+
+	private EditText sourceUrl, sourceCode;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		this.setContentView(R.layout.view_source);
+
+		this.sumbitButton = (Button) this.findViewById(R.id.sumbit);
+		this.sourceUrl = (EditText) this.findViewById(R.id.source_url);
+		this.sourceCode = (EditText) this.findViewById(R.id.source_code);
+
+		this.initBind();
+
+		Log.i("life", "onCreate");
+	}
+
+	protected void initBind() {
+		this.sumbitButton.setOnClickListener(new MyClickLister());
+	}
+
+	class MyClickLister implements View.OnClickListener {
+
 		@Override
 		public void onClick(View v) {
-			
+
 			Intent intent = null;
-			
-			switch(v.getId()) {
-				case R.id.close_pc_button:
-					
-					//List<BasicNameValuePair> params = new LinkedList<BasicNameValuePair>();
-					//params.add(new BasicNameValuePair("client", "android"));
-					
-					//String param = URLEncodedUtils.format(params, "UTF-8");
-					
-					HttpGet httpGet = new HttpGet(ViewSourceActivity.BASEURL);
-					
-					HttpParams httpParams = new BasicHttpParams();
-					
-					 // 设置连接超时和 Socket 超时，以及 Socket 缓存大小  
-			        HttpConnectionParams.setConnectionTimeout(httpParams, 20 * 1000);  
-			        HttpConnectionParams.setSoTimeout(httpParams, 20 * 1000);  
-			        HttpConnectionParams.setSocketBufferSize(httpParams, 8192);  
-			        // 设置重定向，缺省为 true  
-			        HttpClientParams.setRedirecting(httpParams, true);  
-			        // 设置 user agent  
-			        String userAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2) Gecko/20100115 Firefox/3.6";  
-			        HttpProtocolParams.setUserAgent(httpParams, userAgent);  
-					
-					HttpClient httpClient = new DefaultHttpClient(httpParams);
-					
-					try {
-						HttpResponse response = httpClient.execute(httpGet);
-						
-						int statusCode = response.getStatusLine().getStatusCode();
-						
-						//Log.i("statusCode", String.valueOf(statusCode));
-						
-						if(statusCode == ViewSourceActivity.OK_STATUS_CODE) {
-							Toast.makeText(ViewSourceActivity.this, "关机成功", Toast.LENGTH_LONG).show();
-						}else{
-							Toast.makeText(ViewSourceActivity.this, "关机失败", Toast.LENGTH_LONG).show();
-						}
-					} catch (ClientProtocolException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						String strResult = e.getMessage().toString();  
-						Log.i("test", strResult);
-						e.printStackTrace();
+
+			switch (v.getId()) {
+			// 提交
+			case R.id.sumbit:
+					String url = ViewSourceActivity.this.sourceUrl.toString();
+					if(url.equals("") || url == null) {
+						Toast.makeText(ViewSourceActivity.this, "请输入url", Toast.LENGTH_SHORT).show();
+					} else {
+						String content = ViewSourceActivity.this.fileGetContents(url);
+						ViewSourceActivity.this.sourceCode.setText(content);
 					}
+
 				break;
-				
-				case R.id.wakeup_pc_button:
-					intent = new Intent();
-					intent.setClass(ViewSourceActivity.this, WakeupPcActivity.class);
-					startActivity(intent);
-				break;
-				
-				case R.id.view_source_button:
-					//显示窗口
-					intent = new Intent();
-					intent.setClass(ViewSourceActivity.this, ViewSourceActivity.class);
-					startActivity(intent);
-				break;
+
 			}
-			
+
 		}
-    }
-    
-    
+	}
+
+	protected String fileGetContents(String url) {
+
+		String returnStr = "";
+
+		HttpGet httpGet = new HttpGet(url);
+
+		HttpParams httpParams = new BasicHttpParams();
+
+		// 设置连接超时和 Socket 超时，以及 Socket 缓存大小
+		HttpConnectionParams.setConnectionTimeout(httpParams, 20 * 1000);
+		HttpConnectionParams.setSoTimeout(httpParams, 20 * 1000);
+		HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
+		// 设置重定向，缺省为 true
+		HttpClientParams.setRedirecting(httpParams, true);
+		// 设置 user agent
+		String userAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2) Gecko/20100115 Firefox/3.6";
+		HttpProtocolParams.setUserAgent(httpParams, userAgent);
+
+		HttpClient httpClient = new DefaultHttpClient(httpParams);
+
+		try {
+			HttpResponse response = httpClient.execute(httpGet);
+
+			int statusCode = response.getStatusLine().getStatusCode();
+
+			if (statusCode == ClosePcActivity.OK_STATUS_CODE) {
+				// 获取内容
+				returnStr = EntityUtils.toString(response.getEntity());
+			} else {
+				Toast.makeText(ViewSourceActivity.this, "获取源码失败",
+						Toast.LENGTH_SHORT).show();
+			}
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			String strResult = e.getMessage().toString();
+			Log.i("test", strResult);
+			e.printStackTrace();
+		}
+		return returnStr;
+	}
+
 }
